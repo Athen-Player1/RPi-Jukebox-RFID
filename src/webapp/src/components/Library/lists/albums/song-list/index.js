@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -22,6 +22,11 @@ const SongList = ({
 }) => {
   const { t } = useTranslation();
   const { artist, album } = useParams();
+  const [searchParams] = useSearchParams();
+  const artistLabel = decodeURIComponent(artist);
+  const albumLabel = decodeURIComponent(album);
+  const albumArtistTag = searchParams.get('missingAlbumArtist') === '1' ? '' : artistLabel;
+  const albumTag = searchParams.get('missingAlbum') === '1' ? '' : albumLabel;
   const [songs, setSongs] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,8 +37,8 @@ const SongList = ({
       const { result, error } = await request(
         'songList',
         {
-          album: decodeURIComponent(album),
-          albumartist: decodeURIComponent(artist),
+          album: albumTag,
+          albumartist: albumArtistTag,
         }
       );
       setIsLoading(false);
@@ -45,18 +50,18 @@ const SongList = ({
     }
 
     getSongList();
-  }, [album, artist]);
+  }, [albumTag, albumArtistTag]);
 
   return (
     <Grid container id="song-list">
       <SongListHeader />
       <SongListHeadline
-        album={decodeURIComponent(album)}
-        artist={decodeURIComponent(artist)}
+        album={albumLabel}
+        artist={artistLabel}
       />
       <SongListControls
-        album={decodeURIComponent(album)}
-        albumartist={decodeURIComponent(artist)}
+        album={albumTag}
+        albumartist={albumArtistTag}
         disabled={songs.length === 0}
         isSelecting={isSelecting}
         registerMusicToCard={registerMusicToCard}
@@ -75,7 +80,7 @@ const SongList = ({
           : <List sx={{ width: '100%' }}>
               {songs.map(song =>
                 <SongListItem
-                  key={song.track}
+                  key={song.file}
                   song={song}
                   isSelecting={isSelecting}
                   registerMusicToCard={registerMusicToCard}
