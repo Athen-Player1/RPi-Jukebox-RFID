@@ -14,6 +14,7 @@ import jukebox.utils
 import jukebox.publishing as publishing
 from jukebox.rpc.server import RpcServer
 from jukebox.NvManager import nv_manager
+from jukebox.music_upload import start_music_upload
 
 import jukebox
 import jukebox.cfghandler
@@ -246,6 +247,8 @@ class JukeBox:
             # Write reference of command shortcuts
             with open(os.path.join(artifacts_dir, 'rpc_command_alias_reference.txt'), 'w') as stream:
                 jukebox.utils.generate_cmd_alias_reference(stream)
+
+        start_music_upload()
 
         # Start the RPC Server
         self.rpc_server.run()
