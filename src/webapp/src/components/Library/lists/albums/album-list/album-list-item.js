@@ -55,8 +55,13 @@ const AlbumListItem = ({ albumartist, album, isButton = true }) => {
     const artist = encodeURIComponent(data?.albumartist || t('library.albums.unknown-artist'));
     const album = encodeURIComponent(data?.album || t('library.albums.unknown-album'));
 
-    // TODO: Introduce fallback incase artist or album are undefined
-    const location = `${artist}/${album}${urlSearch}`;
+    const search = new URLSearchParams(urlSearch);
+    search.delete('missingAlbumArtist');
+    search.delete('missingAlbum');
+    if (!data?.albumartist) search.set('missingAlbumArtist', '1');
+    if (!data?.album) search.set('missingAlbum', '1');
+    const query = search.toString();
+    const location = `${artist}/${album}${query ? `?${query}` : ''}`;
 
     return <Link ref={ref} to={location} {...props} />
   });
