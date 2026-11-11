@@ -1,4 +1,4 @@
-  """Receive music uploads from the local nginx proxy."""
+"""Receive music uploads from the local nginx proxy."""
 import json
 import logging
 import os
