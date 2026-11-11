@@ -23,8 +23,10 @@ const Albums = ({ musicFilter }) => {
 
     const lowerCaseMusicFilter = musicFilter.toLowerCase();
 
-    return albumartist.toLowerCase().includes(lowerCaseMusicFilter) ||
-      album.toLowerCase().includes(lowerCaseMusicFilter);
+    const artistName = albumartist || t('library.albums.unknown-artist');
+    const albumName = album || t('library.albums.unknown-album');
+    return artistName.toLowerCase().includes(lowerCaseMusicFilter) ||
+      albumName.toLowerCase().includes(lowerCaseMusicFilter);
   };
 
   useEffect(() => {
