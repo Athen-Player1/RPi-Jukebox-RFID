@@ -1,20 +1,13 @@
-import React, { useState } from "react";
-import {
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import React from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import {
-  Grid,
-  IconButton,
-  Stack,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-
+import InputAdornment from '@mui/material/InputAdornment';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import SearchIcon from '@mui/icons-material/Search';
 
 const LibraryHeader = ({ handleMusicFilter, musicFilter }) => {
@@ -22,80 +15,42 @@ const LibraryHeader = ({ handleMusicFilter, musicFilter }) => {
   const navigate = useNavigate();
   const { '*': view } = useParams();
   const { t } = useTranslation();
-  const [showSearchInput, setShowSearchInput] = useState(false);
+  const currentView = view?.startsWith('folders') ? 'folders' : 'albums';
 
-  const getCurrentView = () => (
-    view.startsWith('folders') ? 'folders' : 'albums'
-  );
-
-  const toggleView = () => {
-    const path = view.startsWith('folders') ? 'albums' : 'folders';
+  const changeView = (_, path) => {
+    if (!path) return;
     localStorage.setItem('libraryLastListView', path);
-    navigate(`${path}${urlSearch}`);
+    navigate(path + urlSearch);
   };
 
-  const iconLabel = showSearchInput
-    ? t('library.header.search-hide')
-    : t('library.header.search-show');
-
   return (
-    <Grid container sx={{ marginBottom: '8px' }}>
-      <Grid item
-        xs={12}
-        sx={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', width: '100%' }}
-      >
-        <IconButton
-          aria-label={iconLabel}
-          onClick={() => setShowSearchInput(!showSearchInput)}
-          color={showSearchInput ? 'primary' : undefined}
-          title={iconLabel}
+    <Paper variant="outlined" sx={{ width: '100%', p: 1.5, mb: 1.5, borderRadius: 3 }}>
+      <Stack spacing={1.5} direction={{ xs: 'column', sm: 'row' }}>
+        <TextField
+          fullWidth
+          id="library-search"
+          type="search"
+          label={t('library.header.search-label')}
+          value={musicFilter}
+          onChange={handleMusicFilter}
+          InputProps={{
+            startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment>,
+          }}
+        />
+        <ToggleButtonGroup
+          aria-label={t('library.header.toggle-label')}
+          color="primary"
+          exclusive
+          value={currentView}
+          onChange={changeView}
+          sx={{ flexShrink: 0, '& .MuiToggleButton-root': { flex: 1, minHeight: 44, px: 2 } }}
         >
-          <SearchIcon />
-        </IconButton>
-        {showSearchInput &&
-          <TextField
-            id="library-search"
-            label={t('library.header.search-label')}
-            onChange={handleMusicFilter}
-            value={musicFilter}
-            variant="outlined"
-            size="small"
-            autoFocus
-            focused
-            sx={{
-              width: '100%',
-            }}
-          />
-        }
-        {!showSearchInput &&
-          <Stack
-            alignItems="center"
-            direction="row"
-            sx={{ marginRight: '5px' }}
-          >
-            <Typography
-              color={getCurrentView() === 'albums' && 'primary'}
-              sx={{ transition: 'color .25s' }}
-            >
-              {t('library.header.albums')}
-            </Typography>
-            <Switch
-              checked={getCurrentView() === 'folders' ? true : false}
-              onChange={toggleView}
-              inputProps={{ 'aria-label': t('library.header.toggle-label') }}
-              color="default"
-            />
-            <Typography
-              color={getCurrentView() === 'folders' && 'primary'}
-              sx={{ transition: 'color .25s' }}
-            >
-              {t('library.header.folders')}
-            </Typography>
-          </Stack>
-        }
-      </Grid>
-    </Grid>
+          <ToggleButton value="albums">{t('library.header.albums')}</ToggleButton>
+          <ToggleButton value="folders">{t('library.header.folders')}</ToggleButton>
+        </ToggleButtonGroup>
+      </Stack>
+    </Paper>
   );
-}
+};
 
 export default LibraryHeader;
