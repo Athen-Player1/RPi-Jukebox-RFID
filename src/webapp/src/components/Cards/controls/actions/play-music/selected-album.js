@@ -5,7 +5,7 @@ import AlbumListItem from '../../../../Library/lists/albums/album-list/album-lis
 import NoMusicSelected from './no-music-selected';
 
 const SelectedAlbum = ({ values: [albumartist, album] }) => {
-  if (albumartist && album) {
+  if (typeof albumartist === 'string' && typeof album === 'string') {
     return (
       <List sx={{ width: '100%' }}>
         <AlbumListItem
