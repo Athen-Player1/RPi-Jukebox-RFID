@@ -30,14 +30,14 @@ const SelectPlayMusic = ({
   const { command } = getActionAndCommand(actionData);
   const values = getArgsValues(actionData);
 
-  const selectMusic = () => {
+  const selectMusic = view => {
     const searchParams = createSearchParams({
       isSelecting: true,
       cardId
     });
 
     navigate({
-      pathname: '/library',
+      pathname: `/library/${view}`,
       search: `?${searchParams}`,
    });
   };
@@ -57,13 +57,16 @@ const SelectPlayMusic = ({
         {command === 'play_single' && <SelectedSingle values={values} />}
       </Grid>
 
-      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: 1 }}>
         <Button
           variant="outlined"
-          onClick={selectMusic}
+          onClick={() => selectMusic('folders')}
           endIcon={<KeyboardArrowRightIcon />}
         >
-          {t('cards.controls.actions.play-music.button-label')}
+          {t('library.header.folders')}
+        </Button>
+        <Button variant="outlined" onClick={() => selectMusic('albums')} endIcon={<KeyboardArrowRightIcon />}>
+          {t('library.header.albums')}
         </Button>
       </Grid>
     </Grid>
